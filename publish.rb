@@ -7,31 +7,33 @@ content_path = Dir.pwd
 
 markdown_filetypes = ['.md','.markdown']
 image_filetypes = ['.jpg','.png','.gif','.svg']
+destination = ARGV[0] || 'published'
 
-if File.exists? 'published'
-  FileUtils.chdir 'published'
+if File.exists? destination
+  FileUtils.chdir destination
   FileUtils.rm_rf Dir['**/**']
   FileUtils.chdir content_path
 else
-  FileUtils.mkdir_p('published')
+  FileUtils.mkdir_p(destination)
 end
 
 Dir['**/**'].sort.each do |path|
 
-  next if path === 'published'
+  next if path === destination
 
   if File.directory? path
 
-    FileUtils.mkdir_p File.join 'published', path
+    FileUtils.mkdir_p File.join destination, path
 
   elsif image_filetypes.include? File.extname(path)
 
-    published_path = File.join 'published', File.dirname(path)
+    published_path = File.join destination, File.dirname(path)
     FileUtils.cp path, published_path
 
   elsif markdown_filetypes.include? File.extname(path)
 
-    published_path = File.join 'published', File.dirname(path)
+    published_path = File.join destination, File.dirname(path)
+
     markdown_filename = File.basename( path, File.extname(path) )
     markdown_file = ''
 
