@@ -6,6 +6,12 @@ Feature: Manage Content
 
     Scenario: Images
 
-        Given I have a folder containing images
+        Given a folder containing images
         When I publish content
         Then the images will be included
+
+    Scenario: Folders
+
+        Given a tree of folders
+        When I publish content
+        Then that tree will be preserved

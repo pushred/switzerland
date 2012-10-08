@@ -2,12 +2,20 @@
 
 require 'fileutils'
 
+image_filetypes = ['.jpg','.png','.gif','.svg']
+
+FileUtils.rm_rf('published')
 FileUtils.mkdir('published')
 
-image_filetypes = ['jpg','png','gif','svg']
+Dir['**/**'].sort.each do |path|
 
-Dir.entries('.').each do |file|
-  FileUtils.cp file, 'published' if image_filetypes.include? file.split('.').pop
+  next if path === 'published'
+
+  if File.directory? path
+    FileUtils.mkdir_p File.join 'published', path
+  else
+    published_path = File.join 'published', File.dirname(path)
+    FileUtils.cp path, published_path if image_filetypes.include? File.extname(path)
+  end
+
 end
-
-# FileUtils.rm_rf('published')
