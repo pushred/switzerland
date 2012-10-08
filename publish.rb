@@ -3,11 +3,18 @@
 require 'redcarpet'
 require 'fileutils'
 
+content_path = Dir.pwd
+
 markdown_filetypes = ['.md','.markdown']
 image_filetypes = ['.jpg','.png','.gif','.svg']
 
-FileUtils.rm_rf('published')
-FileUtils.mkdir('published')
+if File.exists? 'published'
+  FileUtils.chdir 'published'
+  FileUtils.rm_rf Dir['**/**']
+  FileUtils.chdir content_path
+else
+  FileUtils.mkdir_p('published')
+end
 
 Dir['**/**'].sort.each do |path|
 

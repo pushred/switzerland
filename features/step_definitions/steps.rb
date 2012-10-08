@@ -1,21 +1,21 @@
 require 'nokogiri'
 
 ROOT = FileUtils.pwd
-TEST_DIRECTORY = File.join ROOT, 'example'
+DESTINATION = File.join ROOT, 'test'
 PUBLISH_SCRIPT = File.join ROOT, 'publish.rb'
 EXAMPLE_IMAGE = 'alps.jpg'
 
 Before do
-  FileUtils.mkdir TEST_DIRECTORY
-  Dir.chdir TEST_DIRECTORY
+  FileUtils.mkdir DESTINATION unless File.exists? DESTINATION
+  Dir.chdir DESTINATION
 end
 
 After do
-  FileUtils.rm_rf TEST_DIRECTORY
+  FileUtils.rm_rf DESTINATION
 end
 
 Given /^a folder containing images$/ do
-  FileUtils.cp File.join(ROOT, EXAMPLE_IMAGE), TEST_DIRECTORY
+  FileUtils.cp File.join(ROOT, EXAMPLE_IMAGE), DESTINATION
 end
 
 Given /^.*a folder containing Markdown files.*$/ do |example_markdown|
@@ -36,15 +36,19 @@ When /^I publish content$/ do
 end
 
 Then /^the images will be included$/ do
-  File.exists?( File.join TEST_DIRECTORY, 'published', EXAMPLE_IMAGE ).should === true
+  File.exists?( File.join DESTINATION, 'published', EXAMPLE_IMAGE ).should === true
 end
 
-Then /^that tree will be preserved$/ do
-  File.exists?( File.join TEST_DIRECTORY, 'published', 'fruits', 'citrus', 'tangerines', EXAMPLE_IMAGE ).should === true
+Then /^.*that tree will be.*$/ do
+  File.exists?( File.join DESTINATION, 'published', 'fruits', 'citrus', 'tangerines', EXAMPLE_IMAGE ).should === true
+end
+
+Then /^the contents of the publishing destination will be emptied$/ do
+  (Dir['#{DESTINATION}/**/**'].empty?).should === true
 end
 
 Then /^the Markdown will be converted into HTML$/ do
-  example_markdown = File.join TEST_DIRECTORY, 'published', 'example.html'
+  example_markdown = File.join DESTINATION, 'published', 'example.html'
 
   File.exists?(example_markdown).should === true
 
