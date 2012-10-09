@@ -4,7 +4,6 @@ require 'json'
 ROOT = FileUtils.pwd
 PUBLISH_SCRIPT = File.join ROOT, 'publish.rb'
 CONTENT_PATH = File.join ROOT, 'test'
-EXAMPLE_IMAGE = 'alps.jpg'
 
 destination = 'published'
 
@@ -18,7 +17,7 @@ After do
 end
 
 Given /^a folder containing image files$/ do
-  FileUtils.cp File.join(ROOT, EXAMPLE_IMAGE), '.'
+  `curl -o test.jpg -s http://farm5.staticflickr.com/4027/4711833381_b444090dcc.jpg`
 end
 
 Given /^.*a folder containing Markdown files.*$/ do |example_markdown|
@@ -37,7 +36,10 @@ end
 
 Given /^a tree of folders$/ do
   FileUtils.mkdir_p 'fruits/citrus/tangerines'
-  FileUtils.cp File.join(ROOT, EXAMPLE_IMAGE), 'fruits/citrus/tangerines'
+  File.open('fruits/citrus/tangerines/test.md', 'w') do |file|
+    file.write '# Test'
+    file.close
+  end
 end
 
 When /^I publish content$/ do
@@ -63,11 +65,11 @@ And /^any contents will be emptied$/ do
 end
 
 Then /^the images will be included$/ do
-  File.exists?( File.join destination, EXAMPLE_IMAGE ).should === true
+  File.exists?( File.join destination, 'test.jpg' ).should === true
 end
 
 Then /^.*that tree will be.*$/ do
-  File.exists?( File.join destination, 'fruits', 'citrus', 'tangerines', EXAMPLE_IMAGE ).should === true
+  File.exists?( File.join destination, 'fruits', 'citrus', 'tangerines', 'test.html' ).should === true
 end
 
 Then /^the Markdown will be converted into HTML$/ do
@@ -89,5 +91,5 @@ Then /^the content will be published as JSON$/ do
 end
 
 And /^the destination will match the specified destination$/ do
-  File.exists?( File.join destination, 'fruits', 'citrus', 'tangerines', EXAMPLE_IMAGE ).should === true
+  File.exists?( File.join destination, 'fruits', 'citrus', 'tangerines', 'test.html' ).should === true
 end
