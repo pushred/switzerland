@@ -16,6 +16,10 @@ After do
   FileUtils.rm_rf CONTENT_PATH
 end
 
+Given /^a folder containing empty stub files$/ do
+  `touch test.md`
+end
+
 Given /^a folder containing image files$/ do
   `curl -o test.jpg -s http://farm5.staticflickr.com/4027/4711833381_b444090dcc.jpg`
 end
@@ -82,7 +86,8 @@ Then /^the Markdown will be converted into HTML$/ do
   end
 end
 
-Then /^the content will be published as JSON$/ do
+Then /^.*content will be published as JSON.*$/ do
+
   example_json = File.join destination, 'example.json'
 
   File.open(example_json, 'r') do |content|

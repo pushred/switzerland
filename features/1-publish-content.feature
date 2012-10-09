@@ -27,3 +27,13 @@ Feature: Publishing Content
         """
       When I publish content
       Then the content will be published as JSON
+
+    Scenario: Empty stub files exist
+
+      Given a folder containing empty stub files
+      And a folder containing Markdown files with content such as this:
+        """
+        # Not Empty
+        """
+      When I publish content
+      Then the other content will be published as JSON

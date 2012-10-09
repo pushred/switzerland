@@ -41,6 +41,8 @@ Dir['**/**'].sort.each do |path|
 
     File.open(path, 'r').each { |line| markdown_file << line }
 
+    next if markdown_file.length === 0
+
     renderer = Redcarpet::Render::XHTML.new
     markdown = Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true, :tables => true, :autolink => true)
 
