@@ -28,6 +28,13 @@ Given /^.*a folder containing Markdown files.*$/ do |example_markdown|
   end
 end
 
+Given /^.*a folder containing files with Markdown and YAML content.*$/ do |example_content|
+  File.open('example.md', 'w') do |file|
+    file.write example_content
+    file.close
+  end
+end
+
 Given /^a tree of folders$/ do
   FileUtils.mkdir_p 'fruits/citrus/tangerines'
   FileUtils.cp File.join(ROOT, EXAMPLE_IMAGE), 'fruits/citrus/tangerines'

@@ -3,6 +3,7 @@
 require 'redcarpet'
 require 'fileutils'
 require 'active_support/core_ext'
+require 'yaml'
 
 content_path = Dir.pwd
 
@@ -43,12 +44,15 @@ Dir['**/**'].sort.each do |path|
     renderer = Redcarpet::Render::XHTML.new
     markdown = Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true, :tables => true, :autolink => true)
 
+    yaml_content = YAML.load( markdown_file.match(/\A(---\s*\n.*?\n?)^(---\s*$\n?)/m).to_s ) # RegEx by Derek Worthen (Middleman implementation)
     html_content = markdown.render markdown_file.lines.to_a[1..-1].join
 
     json_content = {
       :body => html_content,
       :slug => markdown_filename
-    }.to_json
+    }
+
+    json_content.merge( yaml_content ) if yaml_content
 
     File.open(published_path + '/' + markdown_filename + '.html', 'w') do |file|
       file.write html_content
@@ -56,7 +60,7 @@ Dir['**/**'].sort.each do |path|
     end
 
     File.open(published_path + '/' + markdown_filename + '.json', 'w') do |file|
-      file.write json_content
+      file.write Hash[json_content.to_a.reverse].to_json
       file.close
     end
 

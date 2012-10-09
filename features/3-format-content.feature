@@ -1,9 +1,9 @@
-Feature: Markdown Formatting
+Feature: Content Formatting
     As a writer,
-    I want to format my content using Markdown
+    I want to format my content using Markdown and YAML
     So I can better focus on what I’m saying
 
-    Scenario: Parsing
+    Scenario: Markdown Formatting
 
       Given a folder containing Markdown files with content such as this:
         """
@@ -30,3 +30,22 @@ Feature: Markdown Formatting
         """
       When I publish content
       Then the Markdown will be converted into HTML
+
+    Scenario: YAML Front Matter
+
+      Given a folder containing files with Markdown and YAML content such as this:
+        """
+        ---
+        layout: three-column
+        title: This is an example
+        ---
+
+        A Second Level Header
+        ---------------------
+
+        Now is the time for all good men to come to
+        the aid of their country. This is just a
+        regular paragraph.
+        """
+      When I publish content
+      Then the content will be published as JSON
