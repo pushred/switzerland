@@ -1,4 +1,5 @@
 require 'nokogiri'
+require 'json'
 
 ROOT = FileUtils.pwd
 PUBLISH_SCRIPT = File.join ROOT, 'publish.rb'
@@ -67,8 +68,16 @@ Then /^the Markdown will be converted into HTML$/ do
 
   File.exists?(example_markdown).should === true
 
-  File.open(example_markdown, 'r') do |markup|
-    Nokogiri::HTML.parse(markup).css('h1').length.should > 0
+  File.open(example_markdown, 'r') do |content|
+    Nokogiri::HTML.parse(content).css('h1').length.should > 0
+  end
+end
+
+Then /^the content will be published as JSON$/ do
+  example_json = File.join destination, 'example.json'
+
+  File.open(example_json, 'r') do |content|
+    JSON.parse(content.read)
   end
 end
 

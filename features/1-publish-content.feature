@@ -18,3 +18,12 @@ Feature: Publishing Content
         Then the destination will be created if it does not exist
         Then that tree will be published into the destination
         And the destination will match the specified destination
+
+    Scenario: Provide content as JSON
+
+      Given a folder containing Markdown files with content such as this:
+        """
+        The overriding design goal for Markdown’s formatting syntax is to make it as readable as possible. The idea is that a Markdown-formatted document should be publishable as-is, as plain text, without looking like it’s been marked up with tags or formatting instructions. While Markdown’s syntax has been influenced by several existing text-to-HTML filters, the single biggest source of inspiration for Markdown’s syntax is the format of plain text email.
+        """
+      When I publish content
+      Then the content will be published as JSON

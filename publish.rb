@@ -2,6 +2,7 @@
 
 require 'redcarpet'
 require 'fileutils'
+require 'active_support/core_ext'
 
 content_path = Dir.pwd
 
@@ -37,15 +38,28 @@ Dir['**/**'].sort.each do |path|
     markdown_filename = File.basename( path, File.extname(path) )
     markdown_file = ''
 
+    File.open(path, 'r').each { |line| markdown_file << line }
+
     renderer = Redcarpet::Render::XHTML.new
     markdown = Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true, :tables => true, :autolink => true)
 
-    File.open(path, 'r').each {|line| markdown_file << line}
+    html_content = markdown.render markdown_file.lines.to_a[1..-1].join
+
+    json_content = {
+      :body => html_content,
+      :slug => markdown_filename
+    }.to_json
 
     File.open(published_path + '/' + markdown_filename + '.html', 'w') do |file|
-      file.write markdown.render markdown_file.lines.to_a[1..-1].join
+      file.write html_content
       file.close
     end
+
+    File.open(published_path + '/' + markdown_filename + '.json', 'w') do |file|
+      file.write json_content
+      file.close
+    end
+
   end
 
 end
