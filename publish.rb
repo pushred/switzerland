@@ -4,6 +4,7 @@ require 'redcarpet'
 require 'fileutils'
 require 'active_support/core_ext'
 require 'yaml'
+require 'nokogiri'
 
 content_path = Dir.pwd
 
@@ -43,15 +44,22 @@ Dir['**/**'].sort.each do |path|
 
     next if markdown_file.length === 0
 
-    renderer = Redcarpet::Render::XHTML.new
+    renderer = Redcarpet::Render::XHTML.new(:with_toc_data => true)
     markdown = Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true, :tables => true, :autolink => true)
 
     yaml_content = YAML.load( markdown_file.match(/\A(---\s*\n.*?\n?)^(---\s*$\n?)/m).to_s ) # RegEx by Derek Worthen (Middleman implementation)
     html_content = markdown.render markdown_file.lines.to_a[0..-1].join
+    anchors = { 'h1' => {}, 'h2' => {}, 'h3' => {}, 'h4' => {}, 'h5' => {}, 'h6' => {} }
+
+    Nokogiri::HTML.parse(html_content).css('h1, h2, h3, h4, h5, h6').each do |heading|
+      next unless heading.attribute('id')
+      anchors[heading.name][heading.text] = '#' + heading.attribute('id').value
+    end
 
     json_content = {
       :body => html_content,
-      :slug => markdown_filename
+      :slug => markdown_filename,
+      :anchors => anchors
     }
 
     json_content.merge( yaml_content ) if yaml_content

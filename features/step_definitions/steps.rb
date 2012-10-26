@@ -38,6 +38,13 @@ Given /^.*a folder containing files with Markdown and YAML content.*$/ do |examp
   end
 end
 
+Given /^.*Markdown containing headings.*$/ do |example_markdown|
+  File.open('example.md', 'w') do |file|
+    file.write example_markdown
+    file.close
+  end
+end
+
 Given /^a tree of folders$/ do
   FileUtils.mkdir_p 'fruits/citrus/tangerines'
   File.open('fruits/citrus/tangerines/test.md', 'w') do |file|
@@ -86,12 +93,30 @@ Then /^the Markdown will be converted into HTML$/ do
   end
 end
 
-Then /^.*content will be published as JSON.*$/ do
+And /^each heading will be assigned a unique anchor$/ do
+  example_markdown = File.join destination, 'example.html'
 
+  File.open(example_markdown, 'r') do |content|
+    Nokogiri::HTML.parse(content).css('h1[id], h2[id], h3[id]').length.should === 3
+  end
+end
+
+Then /^.*content will be published as JSON.*$/ do
   example_json = File.join destination, 'example.json'
 
   File.open(example_json, 'r') do |content|
     JSON.parse(content.read)
+  end
+end
+
+And /^the anchors will be published as JSON$/ do
+  example_json = File.join destination, 'example.json'
+
+  File.open(example_json, 'r') do |content|
+    anchors = JSON.parse(content.read)['anchors']
+    anchors['h1'].length.should === 1
+    anchors['h2'].length.should === 1
+    anchors['h3'].length.should === 1
   end
 end
 

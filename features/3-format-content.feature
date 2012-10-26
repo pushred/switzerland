@@ -49,3 +49,20 @@ Feature: Content Formatting
         """
       When I publish content
       Then the content will be published as JSON
+
+    Scenario: Table of Contents
+
+      Given Markdown containing headings such as this:
+        """
+        A First Level Header
+        ====================
+
+        A Second Level Header
+        ---------------------
+
+        ### Header 3
+        """
+      When I publish content
+      Then the Markdown will be converted into HTML
+      And each heading will be assigned a unique anchor
+      And the anchors will be published as JSON
