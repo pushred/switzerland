@@ -47,7 +47,7 @@ Dir['**/**'].sort.each do |path|
     markdown = Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true, :tables => true, :autolink => true)
 
     yaml_content = YAML.load( markdown_file.match(/\A(---\s*\n.*?\n?)^(---\s*$\n?)/m).to_s ) # RegEx by Derek Worthen (Middleman implementation)
-    html_content = markdown.render markdown_file.lines.to_a[1..-1].join
+    html_content = markdown.render markdown_file.lines.to_a[0..-1].join
 
     json_content = {
       :body => html_content,
