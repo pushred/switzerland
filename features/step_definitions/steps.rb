@@ -3,17 +3,17 @@ require 'json'
 
 ROOT = FileUtils.pwd
 PUBLISH_SCRIPT = File.join ROOT, 'publish.rb'
-CONTENT_PATH = File.join ROOT, 'test'
+TMP_TEST_PATH = File.join ROOT, 'test'
 
 destination = 'published'
 
 Before do
-  FileUtils.mkdir CONTENT_PATH unless File.exists? CONTENT_PATH
-  Dir.chdir CONTENT_PATH
+  FileUtils.mkdir TMP_TEST_PATH unless File.exists? TMP_TEST_PATH
+  Dir.chdir TMP_TEST_PATH
 end
 
 After do
-  FileUtils.rm_rf CONTENT_PATH
+  FileUtils.rm_rf TMP_TEST_PATH
 end
 
 Given /^a folder containing empty stub files$/ do
@@ -47,6 +47,10 @@ end
 
 Given /^a tree of folders$/ do
   FileUtils.mkdir_p 'fruits/citrus/tangerines'
+  File.open('citrus.md', 'w') do |file|
+    file.write '# Test'
+    file.close
+  end
   File.open('fruits/citrus/tangerines/test.md', 'w') do |file|
     file.write '# Test'
     file.close
@@ -81,6 +85,19 @@ end
 
 Then /^.*that tree will be.*$/ do
   File.exists?( File.join destination, 'fruits', 'citrus', 'tangerines', 'test.html' ).should === true
+end
+
+When /^I specify one or more sources of content and a destination$/ do
+  sources = 'citrus.md fruits/citrus'
+  destination = 'somewhere/else'
+
+  `ruby #{PUBLISH_SCRIPT} #{sources} #{destination}`
+  raise('Script not found') unless $?.success?
+end
+
+Then /^only those sources will be published into the destination$/ do
+  File.exists?( File.join destination, 'citrus.html' ).should === true
+  File.exists?( File.join destination, 'tangerines', 'test.html' ).should === true
 end
 
 Then /^the Markdown will be converted into HTML$/ do

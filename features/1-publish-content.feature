@@ -11,6 +11,12 @@ Feature: Publishing Content
         And any contents will be emptied
         Then that tree will be published into the destination
 
+    Scenario: Specify content sources
+
+      Given a tree of folders
+        When I specify one or more sources of content and a destination
+        Then only those sources will be published into the destination
+
     Scenario: Specify a different destination
 
       Given a tree of folders
