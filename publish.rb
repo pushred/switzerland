@@ -49,11 +49,11 @@ Dir['**/**'].sort.each do |path|
 
     yaml_content = YAML.load( markdown_file.match(/\A(---\s*\n.*?\n?)^(---\s*$\n?)/m).to_s ) # RegEx by Derek Worthen (Middleman implementation)
     html_content = markdown.render markdown_file.lines.to_a[0..-1].join
-    anchors = { 'h1' => {}, 'h2' => {}, 'h3' => {}, 'h4' => {}, 'h5' => {}, 'h6' => {} }
+    anchors = []
 
     Nokogiri::HTML.parse(html_content).css('h1, h2, h3, h4, h5, h6').each do |heading|
       next unless heading.attribute('id')
-      anchors[heading.name][heading.text] = '#' + heading.attribute('id').value
+      anchors.push({ 'tag' => heading.name, 'text' => heading.text, 'anchor' => heading.attribute('id').value })
     end
 
     json_content = {

@@ -114,9 +114,9 @@ And /^the anchors will be published as JSON$/ do
 
   File.open(example_json, 'r') do |content|
     anchors = JSON.parse(content.read)['anchors']
-    anchors['h1'].length.should === 1
-    anchors['h2'].length.should === 1
-    anchors['h3'].length.should === 1
+    anchors[0]['tag'].should === 'h1'
+    anchors[1]['tag'].should === 'h2'
+    anchors[2]['tag'].should === 'h3'
   end
 end
 
