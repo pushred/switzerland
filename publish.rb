@@ -1,10 +1,21 @@
 #!/usr/bin/ruby
+# coding: utf-8
 
 require 'kramdown'
 require 'fileutils'
 require 'active_support/core_ext'
 require 'yaml'
 require 'nokogiri'
+
+# From http://stackoverflow.com/questions/2070010
+
+def colorize(text, color_code) "\e[#{color_code}m#{text}\e[0m" end
+
+def grey(text); colorize(text, 37); end
+def green(text); colorize(text, 42); end
+def red(text); colorize(text, 41); end
+
+# Process Markdown with Kramdown & Nokogiri, generate HTML + JSON
 
 def publish_content(source_path, destination_path)
 
@@ -27,6 +38,7 @@ def publish_content(source_path, destination_path)
 
     yaml_content = YAML.load( markdown_file.match(/\A(---\s*\n.*?\n?)^(---\s*$\n?)/m).to_s ) # RegEx by Derek Worthen (Middleman implementation)
     html_content = Nokogiri::HTML.parse( Kramdown::Document.new(markdown_file.lines.to_a[0..-1].join, :auto_id_prefix => "toc-", :coderay_css => :class, :coderay_line_numbers => nil, :coderay_wrap => nil).to_html )
+
     anchors = []
 
     html_content.css('h1, h2, h3, h4, h5, h6').each do |heading|
@@ -53,6 +65,14 @@ def publish_content(source_path, destination_path)
     end
 
   end
+end
+
+# Print help to terminal if no arguments are provided
+
+if ARGV.empty?
+  puts red " ✚ usage "
+  puts grey "   source_file_or_directory [published_directory]"
+  puts grey "   source_file1 source_directory2 [published_directory]"
 end
 
 # Traverse content, generate published version
@@ -95,6 +115,12 @@ source_paths.each do |source_path|
     FileUtils.mkdir_p File.dirname( File.join(destination_path, source_path) )
 
     publish_content(source_path, destination_path)
+  elsif ARGV.length > 1
+    puts red " ✚ error "
+    puts grey "   " + source_path + " not found"
   end
 
 end
+
+puts green " ✚ published! "
+puts grey "  " + destination_path
