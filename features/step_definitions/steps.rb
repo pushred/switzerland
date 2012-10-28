@@ -45,6 +45,13 @@ Given /^.*Markdown containing headings.*$/ do |example_markdown|
   end
 end
 
+Given /^.*Markdown containing fenced code blocks.*$/ do |example_markdown|
+  File.open('example.md', 'w') do |file|
+    file.write example_markdown
+    file.close
+  end
+end
+
 Given /^a tree of folders$/ do
   FileUtils.mkdir_p 'fruits/citrus/tangerines'
   File.open('citrus.md', 'w') do |file|
@@ -107,6 +114,27 @@ Then /^the Markdown will be converted into HTML$/ do
 
   File.open(example_markdown, 'r') do |content|
     Nokogiri::HTML.parse(content).css('h1').length.should > 0
+  end
+end
+
+Then /^the code block will be converted into HTML$/ do
+  example_markdown = File.join destination, 'example.html'
+
+  File.exists?(example_markdown).should === true
+
+  File.open(example_markdown, 'r') do |content|
+    Nokogiri::HTML.parse(content).css('code.ruby').length.should > 0
+  end
+end
+
+
+Then /^the syntax will be highlighted using Pygments\.rb$/ do
+  example_markdown = File.join destination, 'example.html'
+
+  File.exists?(example_markdown).should === true
+
+  File.open(example_markdown, 'r') do |content|
+    Nokogiri::HTML.parse(content).css('span[class]').length.should === 5
   end
 end
 

@@ -66,3 +66,19 @@ Feature: Content Formatting
       Then the Markdown will be converted into HTML
       And each heading will be assigned a unique anchor
       And the anchors will be published as JSON
+
+    Scenario: GitHub-style Fenced Code Blocks
+
+      Given GitHub-flavored Markdown containing fenced code blocks such as this:
+        """
+        ### Example
+
+        ``` ruby
+        def say_hallo
+          puts 'Hallo!'
+        end
+        ```
+        """
+      When I publish content
+      Then the code block will be converted into HTML
+      And the syntax will be highlighted using Pygments.rb

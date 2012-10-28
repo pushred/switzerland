@@ -5,6 +5,7 @@ require 'fileutils'
 require 'active_support/core_ext'
 require 'yaml'
 require 'nokogiri'
+require 'pygments.rb'
 
 def publish_content(source_path, destination_path)
 
@@ -29,17 +30,23 @@ def publish_content(source_path, destination_path)
     markdown = Redcarpet::Markdown.new(renderer, :fenced_code_blocks => true, :tables => true, :autolink => true)
 
     yaml_content = YAML.load( markdown_file.match(/\A(---\s*\n.*?\n?)^(---\s*$\n?)/m).to_s ) # RegEx by Derek Worthen (Middleman implementation)
-    html_content = markdown.render markdown_file.lines.to_a[0..-1].join
-
+    html_content = Nokogiri::HTML.parse( markdown.render markdown_file.lines.to_a[0..-1].join )
     anchors = []
 
-    Nokogiri::HTML.parse(html_content).css('h1, h2, h3, h4, h5, h6').each do |heading|
+    html_content.css('h1, h2, h3, h4, h5, h6').each do |heading|
       next unless heading.attribute('id')
       anchors.push({ 'tag' => heading.name, 'text' => heading.text, 'anchor' => heading.attribute('id').value })
     end
 
+    html_content.css('pre code').each do |code_block|
+      language = code_block.attribute('class').to_s
+      language = 'html' if language.blank?
+
+      code_block.inner_html = Pygments.highlight(code_block.content, :options => { :encoding => 'utf-8', :nowrap => true }, :lexer => language)
+    end
+
     json_content = {
-      :body => html_content,
+      :body => html_content.css('body').inner_html,
       :slug => markdown_filename,
       :anchors => anchors
     }
@@ -47,7 +54,7 @@ def publish_content(source_path, destination_path)
     json_content.merge( yaml_content ) if yaml_content
 
     File.open(destination_path + '/' + markdown_filename + '.html', 'w') do |file|
-      file.write html_content
+      file.write html_content.css('body').inner_html
       file.close
     end
 
