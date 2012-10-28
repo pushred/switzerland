@@ -9,11 +9,11 @@
 It’s also a static content generator written in Ruby. It’s like [Jekyll][jekyll] and [Middleman][middleman] in that it offers:
 
  - Git-friendly file & folder-based content management
- - [Markdown][markdown] formatting
+ - [Markdown][markdown] formatting via [Kramdown][kramdown]
  - [Fenced code blocks][code-blocks] with optional syntax highlighting
  - YAML front matter
 
-All the tough work here is being handled by [Kramdown][kramdown]. It provides [PHP Markdown Extra][phpmarkdownextra] features such as tables, footnotes, and heading anchors. Missing is anything involving templates, pages, or assets. Switzerland’s output is primarily JSON. Present it however you’d like, using any platform capable of making a GET request. That could even mean GitHub, Dropbox, or a web browser. If it’s `OK 200`, you’re good!
+Missing is anything involving templates, pages, or assets. Switzerland’s output is primarily JSON, intended for consumption client or server-side. Any platform capable of making a GET request is `OK 200`. Publish content to GitHub or a Dropbox and access it from your app, website, or even a web browser.
 
 
 Usage
@@ -56,7 +56,7 @@ published/cheese/forked/maasdam.json
 
 ### Specify a Publishing Destination
 
-If no arguments are provided then published content will be automatically saved into relative directory named `published`. This may be overridden with an argument that either appears after specified source paths or by itself as the only argument.
+If no arguments are provided then published content will be automatically saved into a relative directory named `published`. This may be overridden with an argument that either appears after specified source paths or by itself as the only argument.
 
 ~~~
 ✚ switz cheese.md public
@@ -111,7 +111,7 @@ Use [fenced code blocks][code-blocks] to easily reference example code. The foll
 	alert('hallo!');
 	~~~
 
-Kramdown generates the following markup from the example above, passing optional specified language as a class:
+Kramdown generates the following markup from the example above.
 
 ~~~~~~~ html
 <pre>
@@ -121,6 +121,7 @@ Kramdown generates the following markup from the example above, passing optional
 </pre>
 ~~~~~~~
 
+If a language is specified in the opening fence it is used to generate a class [as recommended][code-class]. This is useful when using client-slide libraries such as [google-code-prettify][prettify] and [Prism.js][prism].
 
 #### Go automatic with CodeRay
 
@@ -165,14 +166,15 @@ title: Switzerland Ain’t a Static Site Generator
  - `slug`
 
 
+[man-cp]: http://ss64.com/osx/cp.html
 [kramdown]: http://kramdown.rubyforge.org
+[coderay]: http://coderay.rubychan.de
 [markdown]: http://daringfireball.net/projects/markdown
-[prism]: http://prismjs.com
 [jekyll]: http://jekyllrb.com
 [middleman]: http://middlemanapp.com
-[coderay]: http://coderay.rubychan.de
 [phpmarkdownextra]: http://michelf.ca/projects/php-markdown/extra
-[code-blocks]: http://kramdown.rubyforge.org/syntax.html#code-blocks
 [gfm]: http://github.github.com/github-flavored-markdown
+[code-blocks]: http://kramdown.rubyforge.org/syntax.html#code-blocks
+[code-class]: http://www.whatwg.org/specs/web-apps/current-work/multipage/text-level-semantics.html#the-code-element
+[prism]: http://prismjs.com
 [prettify]: http://code.google.com/p/google-code-prettify
-[man-cp]: http://ss64.com/osx/cp.html
