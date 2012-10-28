@@ -53,13 +53,13 @@ Given /^.*Markdown containing fenced code blocks.*$/ do |example_markdown|
 end
 
 Given /^a tree of folders$/ do
-  FileUtils.mkdir_p 'fruits/citrus/tangerines'
-  File.open('citrus.md', 'w') do |file|
-    file.write '# Test'
+  FileUtils.mkdir_p 'cheese/cows/swiss'
+  File.open('cows.md', 'w') do |file|
+    file.write '# Cow Milk'
     file.close
   end
-  File.open('fruits/citrus/tangerines/test.md', 'w') do |file|
-    file.write '# Test'
+  File.open('cheese/cows/swiss/emmentaler.md', 'w') do |file|
+    file.write '# The Real Swiss Cheese'
     file.close
   end
 end
@@ -91,11 +91,11 @@ Then /^the images will be included$/ do
 end
 
 Then /^.*that tree will be.*$/ do
-  File.exists?( File.join destination, 'fruits', 'citrus', 'tangerines', 'test.html' ).should === true
+  File.exists?( File.join destination, 'cheese', 'cows', 'swiss', 'emmentaler.html' ).should === true
 end
 
 When /^I specify one or more sources of content and a destination$/ do
-  sources = 'citrus.md fruits/citrus'
+  sources = 'cows.md cheese/cows'
   destination = 'somewhere/else'
 
   `ruby #{PUBLISH_SCRIPT} #{sources} #{destination}`
@@ -103,8 +103,8 @@ When /^I specify one or more sources of content and a destination$/ do
 end
 
 Then /^only those sources will be published into the destination$/ do
-  File.exists?( File.join destination, 'citrus.html' ).should === true
-  File.exists?( File.join destination, 'tangerines', 'test.html' ).should === true
+  File.exists?( File.join destination, 'cows.html' ).should === true
+  File.exists?( File.join destination, 'swiss', 'emmentaler.html' ).should === true
 end
 
 Then /^the Markdown will be converted into HTML$/ do
@@ -166,5 +166,5 @@ And /^the anchors will be published as JSON$/ do
 end
 
 And /^the destination will match the specified destination$/ do
-  File.exists?( File.join destination, 'fruits', 'citrus', 'tangerines', 'test.html' ).should === true
+  File.exists?( File.join destination, 'cheese', 'cows', 'swiss', 'emmentaler.html' ).should === true
 end
