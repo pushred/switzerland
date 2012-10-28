@@ -70,9 +70,10 @@ end
 # Print help to terminal if no arguments are provided
 
 if ARGV.empty?
-  puts red " ✚ usage "
-  puts grey "   source_file_or_directory [published_directory]"
-  puts grey "   source_file1 source_directory2 [published_directory]"
+  puts red " ✚ hallo!"
+  puts "   switzerland works like this:"
+  puts grey "   switz source_file_or_directory [published_directory]"
+  puts grey "   switz source_file1 source_directory2 [published_directory]"
 end
 
 # Traverse content, generate published version

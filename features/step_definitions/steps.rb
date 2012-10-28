@@ -3,7 +3,6 @@ require 'nokogiri'
 require 'json'
 
 ROOT = FileUtils.pwd
-PUBLISH_SCRIPT = File.join ROOT, 'publish.rb'
 TMP_TEST_PATH = File.join ROOT, 'test'
 
 destination = 'published'
@@ -68,14 +67,14 @@ end
 When /^I publish content$/ do
   destination = 'published'
 
-  `ruby #{PUBLISH_SCRIPT}`
+  `switz`
   raise('Script not found') unless $?.success?
 end
 
 When /^I publish content with a specified destination$/ do
   destination = 'somewhere/else'
 
-  `ruby #{PUBLISH_SCRIPT} #{destination}`
+  `switz #{destination}`
   raise('Script not found') unless $?.success?
 end
 
@@ -99,7 +98,7 @@ When /^I specify one or more sources of content and a destination$/ do
   sources = 'cows.md cheese/cows'
   destination = 'somewhere/else'
 
-  `ruby #{PUBLISH_SCRIPT} #{sources} #{destination}`
+  `switz #{sources} #{destination}`
   raise('Script not found') unless $?.success?
 end
 
