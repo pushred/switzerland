@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'nokogiri'
 require 'json'
 
@@ -123,18 +124,23 @@ Then /^the code block will be converted into HTML$/ do
   File.exists?(example_markdown).should === true
 
   File.open(example_markdown, 'r') do |content|
-    Nokogiri::HTML.parse(content).css('code.ruby').length.should > 0
+    if Gem::Specification.find_all_by_name('coderay').empty?
+      Nokogiri::HTML.parse(content).css('code.language-ruby').length.should > 0
+    else
+      Nokogiri::HTML.parse(content).css('span.function').length.should > 0
+    end
   end
 end
 
+Then /^the syntax will be highlighted using Coderay if installed$/ do
+  unless Gem::Specification.find_all_by_name('coderay').empty?
+    example_markdown = File.join destination, 'example.html'
 
-Then /^the syntax will be highlighted using Pygments\.rb$/ do
-  example_markdown = File.join destination, 'example.html'
+    File.exists?(example_markdown).should === true
 
-  File.exists?(example_markdown).should === true
-
-  File.open(example_markdown, 'r') do |content|
-    Nokogiri::HTML.parse(content).css('span[class]').length.should === 5
+    File.open(example_markdown, 'r') do |content|
+      Nokogiri::HTML.parse(content).css('span[class]').length.should === 7
+    end
   end
 end
 

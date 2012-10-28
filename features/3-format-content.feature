@@ -73,12 +73,12 @@ Feature: Content Formatting
         """
         ### Example
 
-        ``` ruby
+        ~~~ ruby
         def say_hallo
           puts 'Hallo!'
         end
-        ```
+        ~~~
         """
       When I publish content
       Then the code block will be converted into HTML
-      And the syntax will be highlighted using Pygments.rb
+      And the syntax will be highlighted using Coderay if installed
