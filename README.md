@@ -6,6 +6,8 @@
  - the frickin’ birthplace of the world wide web
  - famously ~ neutral ~
 
+![Mexican beetle](//Mexican%20Beetle.jpg)
+
 It’s also a static content generator written in Ruby. It’s like [Jekyll][jekyll] and [Middleman][middleman] in that it offers:
 
  - Git-friendly file & folder-based content management
